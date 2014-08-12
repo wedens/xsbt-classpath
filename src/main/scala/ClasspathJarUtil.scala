@@ -1,3 +1,5 @@
+package de.djini.xsbt.classpath
+
 import sbt._
 
 import Predef.{conforms => _, _}
@@ -16,14 +18,14 @@ object ClasspathJarUtil {
 	/** true if the jar has been created or overwritten because it was changed */
 	def jarDirectory(sourceDir:File, cacheDir:File, targetFile:File):Boolean	= {
 		implicit def stringMapEquiv:Equiv[Map[File,String]]	= defaultEquiv
-		
+
 		val sources	= (sourceDir ** -DirectoryFilter).get pair (Path relativeTo sourceDir)
-		
+
 		def makeJar(sources:Seq[(File,String)], jar:File) {
 			IO delete jar
 			IO zip (sources, jar)
 		}
-		
+
 		val cachedMakeJar	=
 				inputChanged(cacheDir / "inputs") { (inChanged, inputs:(Map[File,String] :+: FilesInfo[ModifiedFileInfo] :+: HNil)) =>
 					val sources :+: _ :+: HNil = inputs
